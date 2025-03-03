@@ -9,6 +9,7 @@ def generate_train_command(pretrained_model_name_or_path, clip_l, t5xxl, ae, sam
         "clip_l": clip_l,
         "t5xxl": t5xxl,
         "ae": ae,
+        "mixed_precision": "bf16",
         "cache_latents_to_disk": True,
         "save_model_as": "safetensors",
         "sdpa": True,

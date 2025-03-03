@@ -26,6 +26,7 @@ space_client = init_space()
 
 download_models("flux-dev")
 
+
 def run_command(cmd):
     process = subprocess.Popen(
         cmd,
@@ -36,23 +37,25 @@ def run_command(cmd):
         bufsize=1  # Line buffering
     )
 
-    # Print and log output in real time
+    # Print and log output in real-time
     for line in iter(process.stdout.readline, ''):
         sys.stdout.write(line)  # Print to console
         sys.stdout.flush()  # Ensure immediate output
 
     process.stdout.close()
-    process.wait()
+    process.wait()  # Wait for the process to complete
+    return process.returncode  # Return the exit status of the command
 
 
 def train(job):
     config = job["input"]
 
-    # validate config against AppConfig
+    # Validate config against AppConfig
     try:
         config = AppConfig.model_validate(config)
     except Exception as e:
         return {"error": str(e)}
+
     username = config.username
     lora_name = config.lora_name
     class_tokens = config.class_tokens
@@ -60,18 +63,24 @@ def train(job):
 
     model_name = "flux-dev"
 
-    save_dataset(config.dataset_config, username, lora_name, class_tokens, space_client)
+    save_dataset(config.dataset_config, username,
+                 lora_name, class_tokens, space_client)
     print("Downloading models...")
     download_models(model_name)
-    print("Generate training command...")
+    print("Generating training command...")
     write_command(username, lora_name)
-    print("Write down sample prompt...")
+    print("Writing sample prompt...")
     generate_sample_prompt(username, lora_name, sample_prompt)
-    print("Training started")
+    print("Training started...")
 
-    run_command(f"bash /app/scripts/outputs/{username}/{lora_name}/train.sh")
+    # Run training script and wait until it completes
+    exit_code = run_command(
+        f"bash /app/scripts/outputs/{username}/{lora_name}/train.sh")
 
-    return {"message": "Training started"}
+    if exit_code == 0:
+        return {"message": "Training completed successfully"}
+    else:
+        return {"error": f"Training failed with exit code {exit_code}"}
 
 if __name__ == "__main__":
     runpod.serverless.start( {"handler": train} )
