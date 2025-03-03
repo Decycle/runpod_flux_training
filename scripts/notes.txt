@@ -1,0 +1,2 @@
+1. Do we need gradient checkpointing?
+2. Do we need to cast model to fp8?

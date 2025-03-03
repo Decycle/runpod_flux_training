@@ -1,0 +1,14 @@
+# Ignore any .env file
+.env
+
+# Ignore any __pycache__ folder
+__pycache__/
+**/__pycache__/
+
+# Ignore Python compiled files
+*.pyc
+
+# Ignore specific folders in the scripts directory
+scripts/images/
+scripts/models/
+scripts/outputs/
