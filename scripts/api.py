@@ -9,7 +9,6 @@ from pathlib import Path
 import subprocess
 
 import runpod
-from runpod.serverless.utils.rp_validator import validate
 
 import sys
 sys.path.append("/app")
@@ -47,13 +46,13 @@ def run_command(cmd):
 
 
 def train(job):
-    job_input = job["input"]
-    validated_input = validate(job_input, AppConfig)
+    config = job["input"]
 
-    if "errors" in validated_input:
-        return {"error": validated_input["errors"]}
-    config = validated_input["validated_input"]
-
+    # validate config against AppConfig
+    try:
+        config = AppConfig.model_validate(config)
+    except Exception as e:
+        return {"error": str(e)}
     username = config.username
     lora_name = config.lora_name
     class_tokens = config.class_tokens

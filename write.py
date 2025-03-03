@@ -83,8 +83,17 @@ if len(hash_ids) != 0 and len(hash_ids) == len(upload_files):
         "class_tokens": class_tokens,
         "sample_prompt": f"A beautiful image of {class_tokens}",
     }
+    url = os.environ["RUNPOD_URL"]
+    api_key = os.environ["RUNPOD_API_KEY"]
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {api_key}'
+    }
     response = requests.post(
-        "http://localhost:8002/train", json=payload)
+        f"{url}/run", json={
+            "input": payload
+        }, headers=headers
+    )
     if response.status_code == 200:
         st.success("Saved!")
     else:
