@@ -32,7 +32,9 @@ WORKDIR /app/scripts
 RUN pip uninstall triton -y
 
 # Run fluxgym Python application
-CMD ["python3", "api.py"]
+# CMD ["python3", "api.py"]
 
 # pause
 # CMD ["tail", "-f", "/dev/null"]
+
+CMD python3 -u api.py

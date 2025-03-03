@@ -60,14 +60,15 @@ hash_ids = []
 
 username = st.text_input("Username", "decycle")
 lora_name = st.text_input("Lora name", "chinese-maid")
+class_tokens = st.text_input("Class tokens", "p1rs0n")
+sample_prompt = st.text_input("Sample prompt", "A beautiful image of p1rs0n")
+
 if st.button("Upload"):
     hash_ids = upload_images(upload_files, username)
     st.write(hash_ids)
 
 print(len(hash_ids), len(upload_files))
 if len(hash_ids) != 0 and len(hash_ids) == len(upload_files):
-    class_tokens = "p1rs0n"
-
     images = [{"filename": f"{hash}.png"} for hash in hash_ids]
     datasetConfig = {
         "images": images,
@@ -81,7 +82,7 @@ if len(hash_ids) != 0 and len(hash_ids) == len(upload_files):
         "username": username,
         "lora_name": lora_name,
         "class_tokens": class_tokens,
-        "sample_prompt": f"A beautiful image of {class_tokens}",
+        "sample_prompt": sample_prompt
     }
     url = os.environ["RUNPOD_URL"]
     api_key = os.environ["RUNPOD_API_KEY"]
